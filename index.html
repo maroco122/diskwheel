@@ -89,6 +89,11 @@
             background: #ffdd33;
             transform: scale(1.05);
         }
+        .grit-info {
+            font-size: 0.9em;
+            color: #eee;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -113,6 +118,7 @@
         <h1>추천 결과</h1>
         <p>선택하신 재료: <span id="selectedMaterial"></span></p>
         <p>추천 연마 장수: <span id="recommendedGrit"></span></p>
+        <p>추천 입도: <span id="recommendedGritSize"></span> <span class="grit-info">(입도가 낮을수록 거칠고, 높을수록 부드러움)</span></p>
         <p>추천 디스크 휠 페이퍼를 확인하세요!</p>
         <a href="https://smartstore.naver.com/real09/products/4179931487" target="_blank">제품 바로가기</a>
     </div>
@@ -137,27 +143,29 @@
             }
         }
 
-        function calculateGrit(material) {
-            // 소재별 추천 연마 장수 계산 (예시 규칙)
-            const gritRecommendations = {
-                "알루미늄 산화물": "60장", // 중간 경도
-                "지르코니아": "45장",      // 높은 경도, 거친 연마
-                "세라믹": "45장",         // 매우 단단함
-                "규소 카바이드": "72장",  // 부드러운 마무리
-                "다이아몬드": "45장",     // 초경도
-                "탄소강": "60장",        // 일반 강철
-                "스테인리스강": "60장",   // 내식성 강철
-                "티타늄": "72장",        // 연마 시 부드러운 처리 필요
-                "구리": "72장"           // 연성 금속
+        function calculateRecommendations(material) {
+            // 소재별 추천 연마 장수와 입도 계산
+            const recommendations = {
+                "알루미늄 산화물": { grit: "60장", gritSize: "80~120" },  // 중간 경도, 중간 입도
+                "지르코니아": { grit: "45장", gritSize: "40~60" },        // 높은 경도, 거친 입도
+                "세라믹": { grit: "45장", gritSize: "40~60" },            // 매우 단단함, 거친 입도
+                "규소 카바이드": { grit: "72장", gritSize: "150~240" },   // 부드러운 마무리, 미세 입도
+                "다이아몬드": { grit: "45장", gritSize: "40~60" },        // 초경도, 거친 입도
+                "탄소강": { grit: "60장", gritSize: "80~120" },          // 일반 강철, 중간 입도
+                "스테인리스강": { grit: "60장", gritSize: "80~120" },     // 내식성 강철, 중간 입도
+                "티타늄": { grit: "72장", gritSize: "150~240" },         // 부드러운 처리, 미세 입도
+                "구리": { grit: "72장", gritSize: "150~240" }            // 연성 금속, 미세 입도
             };
-            return gritRecommendations[material] || "60장"; // 기본값
+            return recommendations[material] || { grit: "60장", gritSize: "80~120" }; // 기본값
         }
 
         function showResult() {
             selectionSection.classList.add("hidden");
             resultSection.classList.remove("hidden");
+            const { grit, gritSize } = calculateRecommendations(selectedMaterial);
             document.getElementById("selectedMaterial").innerText = selectedMaterial;
-            document.getElementById("recommendedGrit").innerText = calculateGrit(selectedMaterial);
+            document.getElementById("recommendedGrit").innerText = grit;
+            document.getElementById("recommendedGritSize").innerText = gritSize;
 
             // 뒤로가기 시 선택 화면으로 복귀
             window.onpopstate = function() {
