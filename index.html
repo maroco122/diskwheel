@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디스크 휠 페이퍼 선택 추천기</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        h2, h1 {
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .materials {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 700px;
+            margin: 30px auto;
+        }
+        .material {
+            padding: 15px;
+            border: 2px solid #fff;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s, background 0.3s;
+            font-size: 1.1em;
+        }
+        .material:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .material.selected {
+            background: #ffcc00;
+            color: #333;
+            border-color: #ffcc00;
+            transform: scale(1.1);
+        }
+        button {
+            margin: 15px;
+            padding: 12px 25px;
+            background: #ff3366;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background: #ff6699;
+            transform: scale(1.05);
+        }
+        .hidden {
+            display: none;
+        }
+        #resultSection {
+            margin-top: 40px;
+            background: linear-gradient(135deg, #4ecdc4, #ff6b6b);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #resultSection p {
+            font-size: 1.5em;
+            margin: 20px 0;
+        }
+        #resultSection a {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #ffcc00;
+            color: #333;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 1.2em;
+            transition: background 0.3s, transform 0.2s;
+        }
+        #resultSection a:hover {
+            background: #ffdd33;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div id="selectionSection">
+        <h2>디스크 휠 페이퍼 선택 추천기</h2>
+        <div class="materials">
+            <div class="material" onclick="selectMaterial(this)">알루미늄 산화물</div>
+            <div class="material" onclick="selectMaterial(this)">지르코니아</div>
+            <div class="material" onclick="selectMaterial(this)">세라믹</div>
+            <div class="material" onclick="selectMaterial(this)">규소 카바이드</div>
+            <div class="material" onclick="selectMaterial(this)">다이아몬드</div>
+            <div class="material" onclick="selectMaterial(this)">탄소강</div>
+            <div class="material" onclick="selectMaterial(this)">스테인리스강</div>
+            <div class="material" onclick="selectMaterial(this)">티타늄</div>
+            <div class="material" onclick="selectMaterial(this)">구리</div>
+        </div>
+        <button onclick="confirmSelection()">확인</button>
+        <button id="redirectButton" class="hidden" onclick="showResult()">추천 디스크휠페이퍼 바로가기</button>
+    </div>
+
+    <div id="resultSection" class="hidden">
+        <h1>추천 결과</h1>
+        <p>선택하신 재료: <span id="selectedMaterial"></span></p>
+        <p>추천 연마 장수: <span id="recommendedGrit"></span></p>
+        <p>추천 디스크 휠 페이퍼를 확인하세요!</p>
+        <a href="https://smartstore.naver.com/real09/products/4179931487" target="_blank">제품 바로가기</a>
+    </div>
+
+    <script>
+        let selectedMaterial = "";
+        const selectionSection = document.getElementById("selectionSection");
+        const resultSection = document.getElementById("resultSection");
+        const redirectButton = document.getElementById("redirectButton");
+
+        function selectMaterial(element) {
+            document.querySelectorAll(".material").forEach(el => el.classList.remove("selected"));
+            element.classList.add("selected");
+            selectedMaterial = element.innerText;
+        }
+
+        function confirmSelection() {
+            if (selectedMaterial) {
+                redirectButton.classList.remove("hidden");
+            } else {
+                alert("재료를 선택해주세요!");
+            }
+        }
+
+        function calculateGrit(material) {
+            // 소재별 추천 연마 장수 계산 (예시 규칙)
+            const gritRecommendations = {
+                "알루미늄 산화물": "60장", // 중간 경도
+                "지르코니아": "45장",      // 높은 경도, 거친 연마
+                "세라믹": "45장",         // 매우 단단함
+                "규소 카바이드": "72장",  // 부드러운 마무리
+                "다이아몬드": "45장",     // 초경도
+                "탄소강": "60장",        // 일반 강철
+                "스테인리스강": "60장",   // 내식성 강철
+                "티타늄": "72장",        // 연마 시 부드러운 처리 필요
+                "구리": "72장"           // 연성 금속
+            };
+            return gritRecommendations[material] || "60장"; // 기본값
+        }
+
+        function showResult() {
+            selectionSection.classList.add("hidden");
+            resultSection.classList.remove("hidden");
+            document.getElementById("selectedMaterial").innerText = selectedMaterial;
+            document.getElementById("recommendedGrit").innerText = calculateGrit(selectedMaterial);
+
+            // 뒤로가기 시 선택 화면으로 복귀
+            window.onpopstate = function() {
+                selectionSection.classList.remove("hidden");
+                resultSection.classList.add("hidden");
+                redirectButton.classList.add("hidden");
+            };
+            history.pushState({}, "Result", "#result");
+        }
+    </script>
+</body>
+</html>
